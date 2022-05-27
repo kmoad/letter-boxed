@@ -10,11 +10,11 @@ class PrefixNode(object):
         self.children = {}
         self.parent = parent
         self.word = None
-        self.letter = None
+        # self.letter = None
 
     def add(self, word, n=0):
-        if n>0:
-            self.letter = word[n-1]
+        # if n>0:
+        #     self.letter = word[n-1]
         if n == len(word):
             self.word = word
         else:
@@ -24,28 +24,28 @@ class PrefixNode(object):
                 self.children[next_letter] = PrefixNode(parent=self)
             self.children[next_letter].add(word, n=next_n)
     
-    def __getitem__(self, letter):
-        return self.children[letter]
+    # def __getitem__(self, letter):
+    #     return self.children[letter]
     
-    def __iter__(self):
-        for child in self.children.values():
-            yield child
+    # def __iter__(self):
+    #     for child in self.children.values():
+    #         yield child
 
-    def check(self, prefix, leaf=False):
-        if len(prefix) == 1:
-            if leaf:
-                return self.word is not None and self.word[-1] == prefix
-            else:
-                return prefix in self.children
-        else:
-            if prefix[0] in self.children:
-                return self.children[prefix[0]].check(prefix[1:], leaf=leaf)
-            else:
-                return False
+    # def check(self, prefix, leaf=False):
+    #     if len(prefix) == 1:
+    #         if leaf:
+    #             return self.word is not None and self.word[-1] == prefix
+    #         else:
+    #             return prefix in self.children
+    #     else:
+    #         if prefix[0] in self.children:
+    #             return self.children[prefix[0]].check(prefix[1:], leaf=leaf)
+    #         else:
+    #             return False
 
-    def count(self):
-        cnt = 1 if self.word else 0
-        return cnt + sum([_.count() for _ in self.children.values()])
+    # def count(self):
+    #     cnt = 1 if self.word else 0
+    #     return cnt + sum([_.count() for _ in self.children.values()])
 
     def lb_iter(self, letter_box, last_group=None):
         words = []
