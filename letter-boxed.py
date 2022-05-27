@@ -108,19 +108,19 @@ if __name__ == '__main__':
     parser.add_argument('letters',
         help='Format: ABC-DEF-GHI-JKL',
     )
-    parser.add_argument('-l','--length',
+    parser.add_argument('-l','--length', dest='max_length',
         type=int,
         default=2,
-        help='Max solution length',
+        help='Max solution length. Default: 2.',
     )
-    parser.add_argument('-w','--words',
+    parser.add_argument('-w','--words', dest='words_fp',
         type=Path,
         default=Path('words_easy.txt'),
-        help='File containing words',
+        help='File containing words. Default: words_easy.txt',
     )
     args = parser.parse_args()
 
-    all_words = args.words.read_text().split('\n')
+    all_words = args.words_fp.read_text().split('\n')
     valid_words = [_ for _ in all_words if len(_)>2]
     prefix_tree = PrefixNode()
     for word in set(valid_words):
@@ -134,6 +134,6 @@ if __name__ == '__main__':
     for word in solution_words:
         by_start[word[0]].append(word)
     
-    solutions = get_solution(solution_words, by_start, letter_box, max_length=2)
+    solutions = get_solution(solution_words, by_start, letter_box, max_length=args.max_length)
     for solution in solutions:
         print(' '.join(solution))
