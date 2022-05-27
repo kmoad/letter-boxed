@@ -47,13 +47,13 @@ class PrefixNode(object):
         n = int(self.is_word)
         return n + sum([len(_) for _ in self.children.values()])
 
-    def lb_iter(self, letter_box, last_group=None):
+    def lb_iter(self, letter_box, last_side=None):
         if self.is_word:
             yield self.prefix
         for next_letter, child in self.children.items():
-            can_continue, this_group = letter_box.check_letter(next_letter, last_group = last_group)
+            can_continue, cur_side = letter_box.check_letter(next_letter, exclude_side = last_side)
             if can_continue:
-                yield from child.lb_iter(letter_box, last_group=this_group)
+                yield from child.lb_iter(letter_box, last_side=cur_side)
 
 class LetterBox(object):
     def __init__(self, sides):
@@ -62,19 +62,17 @@ class LetterBox(object):
         for side in sides:
             self.all_letters |= set(''.join(side))
 
-    def check_letter(self, letter, last_group=None):
-        for group_id, letters in enumerate(self.sides):
-            if letter not in letters:
-                continue
-            if group_id == last_group:
-                return False, None
-            else:
-                return True, group_id
+    def check_letter(self, letter, exclude_side=None):
+        for side_index, letters in enumerate(self.sides):
+            if letter in letters:
+                if side_index == exclude_side:
+                    return False, None
+                else:
+                    return True, side_index
         return False, None
-    
+
     def check_coverage(self, words):
-        query_letters = set(''.join(words))
-        return query_letters == self.all_letters
+        return set(''.join(words)) == self.all_letters
 
 # This is a combinatorial problem. Work should be done to reduce the difficulty.
 # But it will be impossible to avoid the O(n^k) complexity completely. Thankfully,
@@ -85,20 +83,19 @@ def get_solutions(words, words_by_start, letter_box, prev_chain=[], max_length=5
     else:
         cur_words = words
     # Check for solution this layer
-    sol_found = False
     for word in cur_words:
         cur_chain = prev_chain + [word]
         if letter_box.check_coverage(cur_chain):
-            sol_found = True
             yield cur_chain
-    if sol_found:
-        return
     # Fail if this layer was the last
     if len(prev_chain) == max_length-1:
         return
     # Check next layer
     for word in cur_words:
         cur_chain = prev_chain + [word]
+        # Skip next layer if this layer solves
+        if letter_box.check_coverage(cur_chain):
+            continue
         yield from get_solutions(words, words_by_start, letter_box, prev_chain=cur_chain, max_length=max_length)
 
 if __name__ == '__main__':
