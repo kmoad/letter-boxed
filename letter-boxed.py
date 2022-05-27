@@ -79,17 +79,26 @@ class LetterBox(object):
         query_letters = set(''.join(words))
         return query_letters == self.all_letters
 
+# 2022-05-26
 lb = LetterBox([
     ['N','E','P'],
     ['U','L','A'],
     ['B','D','T'],
     ['I','C','M'],
 ])
+# 2022-05-25
 # lb = LetterBox([
 #     ['D','T','E'],
 #     ['C','R','V'],
 #     ['A','O','Y'],
 #     ['I','H','L'],
+# ])
+# https://medium.com/@pnmclaugh/solving-letter-boxed-in-python-5e6cc4b216f9
+# lb = LetterBox([
+#     ['S','M','A'],
+#     ['I','L','P'],
+#     ['T','N','E'],
+#     ['O','C','Z'],
 # ])
 # print(lb.all_letters)
 
@@ -105,6 +114,9 @@ words_by_start = defaultdict(list)
 for word in valid_words:
     words_by_start[word[0]].append(word)
 
+# This is a combinatorial problem. Work should be done to reduce the difficulty.
+# But it will be impossible to avoid the O(n^k) complexity completely. Thankfully,
+# n is at least somewhat bounded
 def get_solution(valid_words, words_by_start, letter_box, prev_chain=[], max_length=5):
     solutions = []
     if prev_chain:
