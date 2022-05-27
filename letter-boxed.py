@@ -76,7 +76,7 @@ class LetterBox(object):
 # This is a combinatorial problem. Work should be done to reduce the difficulty.
 # But it will be impossible to avoid the O(n^k) complexity completely. Thankfully,
 # n is at least somewhat bounded
-def get_solution(words, words_by_start, letter_box, prev_chain=[], max_length=5):
+def get_solutions(words, words_by_start, letter_box, prev_chain=[], max_length=5):
     solutions = []
     if prev_chain:
         cur_words = words_by_start[prev_chain[-1][-1]]
@@ -95,9 +95,7 @@ def get_solution(words, words_by_start, letter_box, prev_chain=[], max_length=5)
     # Check next iteration
     for word in cur_words:
         cur_chain = prev_chain + [word]
-        next_solutions = get_solution(words, words_by_start, letter_box, prev_chain=cur_chain, max_length=max_length)
-        if next_solutions:
-            solutions += next_solutions
+        solutions += get_solutions(words, words_by_start, letter_box, prev_chain=cur_chain, max_length=max_length)
     return solutions
 
 if __name__ == '__main__':
@@ -108,19 +106,19 @@ if __name__ == '__main__':
     parser.add_argument('letters',
         help='Format: ABC-DEF-GHI-JKL',
     )
-    parser.add_argument('-l','--length', dest='max_length',
+    parser.add_argument('-l', '--length', dest='max_length',
         type=int,
         default=2,
-        help='Max solution length. Default: 2.',
+        help='Max solution length. Default: 2',
     )
-    parser.add_argument('-w','--words', dest='words_fp',
+    parser.add_argument('-w', '--words', dest='words_fp',
         type=Path,
         default=Path('words_easy.txt'),
         help='File containing words. Default: words_easy.txt',
     )
     args = parser.parse_args()
 
-    all_words = args.words_fp.read_text().split('\n')
+    all_words = args.words_fp.read_text().split()
     valid_words = [_ for _ in all_words if len(_)>2]
     prefix_tree = PrefixNode()
     for word in set(valid_words):
@@ -128,12 +126,12 @@ if __name__ == '__main__':
 
     letter_box = LetterBox(args.letters.upper().split('-'))
 
-    solution_words = [_ for _ in prefix_tree.lb_iter(letter_box) if len(_)>2]
-    solution_words.sort(key=lambda _: len(_), reverse=True)
+    box_words = [_ for _ in prefix_tree.lb_iter(letter_box) if len(_)>2]
+    box_words.sort(key=lambda _: len(_), reverse=True)
     by_start = defaultdict(list)
-    for word in solution_words:
+    for word in box_words:
         by_start[word[0]].append(word)
     
-    solutions = get_solution(solution_words, by_start, letter_box, max_length=args.max_length)
+    solutions = get_solutions(box_words, by_start, letter_box, max_length=args.max_length)
     for solution in solutions:
         print(' '.join(solution))
