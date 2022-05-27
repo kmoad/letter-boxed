@@ -116,6 +116,10 @@ if __name__ == '__main__':
         default=Path('words_easy.txt'),
         help='File containing words. Default: words_easy.txt',
     )
+    parser.add_argument('--box-words',
+        action='store_true',
+        help='Output just the words that fit the box'
+    )
     args = parser.parse_args()
 
     all_words = args.words_fp.read_text().split()
@@ -126,6 +130,11 @@ if __name__ == '__main__':
 
     box_words = list(prefix_tree.lb_iter(letter_box))
     box_words.sort(key=lambda _: len(_), reverse=True)
+    
+    if args.box_words:
+        print('\n'.join(box_words))
+        exit()
+
     by_start = defaultdict(list)
     for word in box_words:
         by_start[word[0]].append(word)
