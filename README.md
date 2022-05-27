@@ -1,3 +1,18 @@
+```
+$ python letter_boxed.py --help
+usage: letter_boxed.py [-h] [-l MAX_LENGTH] [-w WORDS_FP] [--box-words] letters
+
+positional arguments:
+  letters               Format: ABC-DEF-GHI-JKL
+
+options:
+  -h, --help            show this help message and exit
+  -l MAX_LENGTH, --length MAX_LENGTH
+                        Max solution length. Default: 2
+  -w WORDS_FP, --words WORDS_FP
+                        File containing words. Default: words_easy.txt
+  --box-words           Output just the words that fit the box
+```
 See here for word list
 
 https://github.com/raun/Scrabble/blob/master/words.txt
