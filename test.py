@@ -1,4 +1,5 @@
 from letter_boxed import PrefixNode
+import traceback
 
 t = PrefixNode(['HAY','HELLO','GOODBYE'])
 print(len(t))
@@ -12,3 +13,7 @@ except KeyError as e:
 print(t.get('G','not there'))
 for node in t:
     print(node.prefix)
+try:
+    print(t['HAYWARD'])
+except:
+    traceback.print_exc()

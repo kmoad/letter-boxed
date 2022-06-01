@@ -10,19 +10,19 @@ class PrefixNode(object):
 
     def add(self, word, n=0):
         self.prefix = word[:n]
-        word_done = self.prefix == word
-        self.is_word = self.is_word or word_done
-        if not word_done:
+        if self.prefix == word:
+            self.is_word = True
+        else:
             self.children[word[n]].add(word, n=n+1)
     
     def __getitem__(self, prefix):
-        if len(prefix) <= 1:
-            if prefix[0] in self.children:
+        if prefix[0] in self.children:
+            if len(prefix) <= 1:
                 return self.children[prefix[0]]
             else:
-                raise KeyError(prefix)
+                return self.children[prefix[0]][prefix[1:]]
         else:
-            return self.children[prefix[0]][prefix[1:]]
+            raise KeyError(prefix)
     
     def __contains__(self, prefix):
         if len(prefix) <= 1:
