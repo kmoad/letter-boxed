@@ -1,11 +1,10 @@
 from collections import defaultdict
 
 class PrefixNode(object):
-    def __init__(self, words=[], parent=None):
-        self.parent = parent
+    def __init__(self, words):
         self.prefix = ''
         self.is_word = False
-        self.children = defaultdict(lambda: PrefixNode(parent=self))
+        self.children = defaultdict(lambda: PrefixNode([]))
         for word in words:
             self.add(word, n=0)
 
