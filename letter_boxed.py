@@ -128,7 +128,7 @@ if __name__ == '__main__':
     letter_box = LetterBox(args.letters.upper().split('-'))
 
     box_words = list(prefix_tree.lb_iter(letter_box))
-    box_words.sort(key=lambda _: len(_), reverse=True)
+    box_words.sort(key=len, reverse=True)
     
     if args.box_words:
         print('\n'.join(box_words))
