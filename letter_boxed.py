@@ -49,6 +49,7 @@ class PrefixNode(object):
     def lb_iter(self, letter_box, last_side=None):
         if self.is_word:
             yield self.prefix
+        cur_side = last_side
         for next_letter, child in self.children.items():
             can_continue, cur_side = letter_box.check_letter(next_letter, exclude_side = last_side)
             if can_continue:
@@ -58,16 +59,16 @@ class LetterBox(object):
     def __init__(self, sides):
         self.sides = [list(_) for _ in sides]
         self.all_letters = set()
-        for side in sides:
-            self.all_letters |= set(''.join(side))
+        for side in self.sides:
+            self.all_letters |= set(side)
 
-    def check_letter(self, letter, exclude_side=None):
-        for side_index, letters in enumerate(self.sides):
-            if letter in letters:
-                if side_index == exclude_side:
-                    return False, None
-                else:
+    def check_letter(self, query_letter, exclude_side=None):
+        for side_index, side_letters in enumerate(self.sides):
+            if query_letter in side_letters:
+                if side_index != exclude_side:
                     return True, side_index
+                else:
+                    return False, None
         return False, None
 
     def check_coverage(self, words):
@@ -75,7 +76,7 @@ class LetterBox(object):
 
 # This is a combinatorial problem. Work should be done to reduce the difficulty.
 # But it will be impossible to avoid the O(n^k) complexity completely. Thankfully,
-# n is at least somewhat bounded
+# n is bounded.
 def get_solutions(words, words_by_start, letter_box, prev_chain=[], max_length=5):
     if prev_chain:
         cur_words = words_by_start[prev_chain[-1][-1]]
