@@ -37,9 +37,9 @@ class PrefixNode(object):
             return args[1] if len(args)>=2 else None
 
     def __iter__(self):
+        if self.is_word:
+            yield self
         for child in self.children.values():
-            if child.is_word:
-                yield child
             yield from child
 
     def __len__(self):
