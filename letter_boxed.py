@@ -1,10 +1,10 @@
 from collections import defaultdict
 
-class PrefixNode(object):
+class PrefixTree(object):
     def __init__(self, words):
         self.prefix = ''
         self.is_word = False
-        self.children = defaultdict(lambda: PrefixNode([]))
+        self.children = defaultdict(lambda: self.__class__([]))
         for word in words:
             self.add(word, n=0)
 
@@ -92,6 +92,8 @@ def get_solutions(words, words_by_start, letter_box, prev_chain=[], max_length=5
         return
     # Check next layer
     for word in cur_words:
+        if word in cur_chain:
+            continue
         cur_chain = prev_chain + [word]
         # Skip next layer if this layer solves
         if letter_box.check_coverage(cur_chain):
@@ -111,6 +113,16 @@ if __name__ == '__main__':
         default=2,
         help='Max solution length. Default: 2',
     )
+    parser.add_argument('--min-word-length', dest='min_word_length',
+        type=int,
+        default=2,
+        help='Minimum word length',
+    )
+    parser.add_argument('--max-word-length', dest='max_word_length',
+        type=int,
+        default=None,
+        help='Minimum word length',
+    )
     parser.add_argument('-w', '--words', dest='words_fp',
         type=Path,
         default=Path('words_easy.txt'),
@@ -123,8 +135,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     all_words = args.words_fp.read_text().split()
-    valid_words = [_ for _ in all_words if len(_)>2]
-    prefix_tree = PrefixNode(valid_words)
+    if args.min_word_length:
+        tmp = [_ for _ in all_words if len(_) >= args.min_word_length]
+        all_words = tmp
+        del tmp
+    if args.max_word_length:
+        tmp = [_ for _ in all_words if len(_) <= args.max_word_length]
+        all_words = tmp
+        del tmp
+    all_words.sort()
+    prefix_tree = PrefixTree(all_words)
 
     letter_box = LetterBox(args.letters.upper().split('-'))
 

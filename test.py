@@ -1,7 +1,7 @@
-from letter_boxed import PrefixNode
+from letter_boxed import PrefixTree
 import traceback
 
-t = PrefixNode(['HAY','HELLO','GOODBYE'])
+t = PrefixTree(['HAY','HELLO','GOODBYE'])
 print(len(t))
 print(t['H'].prefix)
 print('H' in t)
@@ -14,6 +14,6 @@ print(t.get('G','not there'))
 for node in t:
     print(node.prefix)
 try:
-    print(t['HAYWARD'])
+    print(t['HAYBALE'])
 except:
     traceback.print_exc()
