@@ -130,8 +130,8 @@ if __name__ == '__main__':
     )
     parser.add_argument('-w', '--words', dest='words_fp',
         type=Path,
-        default=Path('words_easy.txt'),
-        help='File containing words. Default: words_easy.txt',
+        default=Path('words-easy.txt'),
+        help='File containing words. Default: words-easy.txt',
     )
     parser.add_argument('--box-words',
         action='store_true',
@@ -139,17 +139,13 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    all_words = args.words_fp.read_text().split()
+    all_words = [l.strip().upper() for l in args.words_fp.open()]
     if args.min_word_length:
-        tmp = [_ for _ in all_words if len(_) >= args.min_word_length]
-        all_words = tmp
-        del tmp
+        words = [_ for _ in all_words if len(_) >= args.min_word_length]
     if args.max_word_length:
-        tmp = [_ for _ in all_words if len(_) <= args.max_word_length]
-        all_words = tmp
-        del tmp
-    all_words.sort()
-    prefix_tree = PrefixTree(all_words)
+        words = [_ for _ in all_words if len(_) <= args.max_word_length]
+    words.sort()
+    prefix_tree = PrefixTree(words)
 
     letter_box = LetterBox(args.letters.upper().split('-'))
 
