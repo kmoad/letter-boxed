@@ -92,7 +92,7 @@ def get_solutions(words, words_by_start, letter_box, prev_chain=[], max_length=5
         return
     # Check next layer
     for word in cur_words:
-        if word in cur_chain:
+        if word in prev_chain:
             continue
         cur_chain = prev_chain + [word]
         # Skip next layer if this layer solves
