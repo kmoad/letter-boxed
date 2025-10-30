@@ -46,15 +46,6 @@ class PrefixTree(object):
         n = int(self.is_word)
         return n + sum([len(_) for _ in self.children.values()])
 
-    def lb_iter(self, letter_box, last_side=None):
-        if self.is_word:
-            yield self.prefix
-        cur_side = last_side
-        for next_letter, child in self.children.items():
-            can_continue, cur_side = letter_box.check_letter(next_letter, exclude_side = last_side)
-            if can_continue:
-                yield from child.lb_iter(letter_box, last_side=cur_side)
-
 class LetterBox(object):
     def __init__(self, sides):
         self.sides = [list(_) for _ in sides]
@@ -73,6 +64,16 @@ class LetterBox(object):
 
     def check_coverage(self, words):
         return set(''.join(words)) == self.all_letters
+    
+    def find_words(self, pt: PrefixTree, exclude_side=None):
+        words = []
+        if pt.is_word:
+            words.append(pt.prefix)
+        for child_letter, child_pt in pt.children.items():
+            letter_found, letter_side = self.check_letter(child_letter, exclude_side=exclude_side)
+            if letter_found:
+                words += self.find_words(child_pt, exclude_side=letter_side)
+        return words
 
 # This is a combinatorial problem. Work should be done to reduce the difficulty.
 # But it will be impossible to avoid the O(n^k) complexity completely. Thankfully,
@@ -152,7 +153,7 @@ if __name__ == '__main__':
 
     letter_box = LetterBox(args.letters.upper().split('-'))
 
-    box_words = list(prefix_tree.lb_iter(letter_box))
+    box_words = letter_box.find_words(prefix_tree)
     box_words.sort(key=len, reverse=True)
     
     if args.box_words:
