@@ -82,22 +82,26 @@ def get_solutions(words, words_by_start, letter_box, prev_chain=[], max_length=5
         cur_words = words_by_start[prev_chain[-1][-1]]
     else:
         cur_words = words
-    # Check for solution this layer
+    # Yield the solutions at this layer
+    solves_this_layer = set()
     for word in cur_words:
         cur_chain = prev_chain + [word]
         if letter_box.check_coverage(cur_chain):
+            solves_this_layer.add(word)
             yield cur_chain
     # Fail if this layer was the last
     if len(prev_chain) == max_length-1:
         return
     # Check next layer
     for word in cur_words:
+        # Already yielded this layer's solutions
+        if word in solves_this_layer:
+            continue
+        # Avoid loops
         if word in prev_chain:
             continue
         cur_chain = prev_chain + [word]
-        # Skip next layer if this layer solves
-        if letter_box.check_coverage(cur_chain):
-            continue
+        # Check for soluions in next layer
         yield from get_solutions(words, words_by_start, letter_box, prev_chain=cur_chain, max_length=max_length)
 
 if __name__ == '__main__':
